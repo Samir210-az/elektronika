@@ -14,6 +14,13 @@ export default function Hero() {
     <section ref={ref} className="relative flex flex-col items-center justify-center overflow-hidden bg-black pt-6 pb-14 min-h-[600px] md:min-h-[720px]">
       <PortalAnimation />
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[var(--bg-deep)]" />
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background:
+            "radial-gradient(ellipse 70% 50% at 50% 42%, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0) 70%)",
+        }}
+      />
 
       <motion.div style={{ y: yText, opacity }} className="relative z-10 text-center px-6 max-w-3xl">
         <motion.span

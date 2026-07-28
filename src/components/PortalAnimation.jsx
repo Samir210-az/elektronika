@@ -32,7 +32,7 @@ export default function PortalAnimation() {
         size: (0.8 + Math.random() * 1.8) * window.devicePixelRatio,
         color: COLORS[Math.floor(Math.random() * COLORS.length)],
         life: Math.random(),
-        maxRadius: Math.min(w, h) * (0.5 + Math.random() * 0.4),
+        maxRadius: Math.min(w, h) * (0.55 + Math.random() * 0.45),
       };
     }
 
@@ -83,7 +83,7 @@ export default function PortalAnimation() {
     }
 
     function drawPortal() {
-      const baseR = Math.min(w, h) * 0.26;
+      const baseR = Math.min(w, h) * 0.33;
       for (let ring = 0; ring < 4; ring++) {
         const r = baseR + ring * 18 * window.devicePixelRatio;
         const rot = t * (0.12 + ring * 0.04) * (ring % 2 === 0 ? 1 : -1);
