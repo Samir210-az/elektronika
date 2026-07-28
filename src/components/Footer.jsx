@@ -84,12 +84,12 @@ export default function Footer() {
           <div className="mt-5">
             <h4 className="font-semibold mb-3 text-sm">Bizi izləyin</h4>
             <a
-              href="https://instagram.com/security_group"
+              href="https://instagram.com/securtiy_group"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 text-sm text-[var(--text-dim)] hover:text-[var(--accent-cyan)] transition-colors"
             >
-              <InstagramIcon /> @security_group
+              <InstagramIcon /> @securtiy_group
             </a>
           </div>
         </div>
@@ -97,12 +97,12 @@ export default function Footer() {
       <div className="border-t border-white/5 py-5 text-center text-xs text-[var(--text-dim)]">
         Powered by{" "}
         <a
-          href="https://instagram.com/security_group"
+          href="https://instagram.com/securtiy_group"
           target="_blank"
           rel="noopener noreferrer"
           className="text-[var(--accent-cyan)] hover:underline"
         >
-          security_group
+          securtiy_group
         </a>
       </div>
     </footer>
