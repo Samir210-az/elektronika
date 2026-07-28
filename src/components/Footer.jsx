@@ -1,8 +1,9 @@
 "use client";
 import { useState } from "react";
+import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { usePwaInstall } from "@/context/PwaInstallContext";
-import { Download, Check } from "lucide-react";
+import { Check } from "lucide-react";
 
 function InstagramIcon(props) {
   return (
@@ -55,9 +56,16 @@ export default function Footer() {
             <div className="relative">
               <button
                 onClick={handleInstallClick}
-                className="inline-flex items-center gap-2 text-sm glass px-4 py-2 rounded-full hover:border-[var(--accent-cyan)] transition-colors"
+                className="btn-primary inline-flex items-center gap-2.5 text-sm font-semibold text-white pl-2 pr-4 py-2 rounded-full"
               >
-                <Download size={15} /> Tətbiqi yüklə
+                <Image
+                  src="/icons/icon-192.png"
+                  alt=""
+                  width={22}
+                  height={22}
+                  className="rounded-md"
+                />
+                Tətbiqi yüklə
               </button>
               <AnimatePresence>
                 {showHint && (

@@ -53,7 +53,7 @@ export function StoreProvider({ children }) {
           i.id === product.id ? { ...i, qty: i.qty + qty } : i
         );
       }
-      return [...prev, { id: product.id, name: product.name, price: product.price, qty }];
+      return [...prev, { id: product.id, name: product.name, price: product.price, image: product.images?.[0] || "", qty }];
     });
   }
 

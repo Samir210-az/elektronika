@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { useStore } from "@/context/StoreContext";
 import { buildOrderWhatsAppLink } from "@/lib/whatsapp";
@@ -52,10 +53,17 @@ export default function CartPage() {
         <div className="grid md:grid-cols-3 gap-10">
           <div className="md:col-span-2 space-y-4">
             {cart.map((item) => (
-              <div key={item.id} className="glass rounded-xl p-4 flex items-center justify-between">
-                <div>
-                  <p className="font-medium text-sm">{item.name}</p>
-                  <p className="text-xs text-[var(--text-dim)]">{item.price.toFixed(2)} ₼</p>
+              <div key={item.id} className="glass rounded-xl p-4 flex items-center justify-between gap-4">
+                <div className="flex items-center gap-4 min-w-0">
+                  <div className="relative w-16 h-16 rounded-lg overflow-hidden shrink-0 bg-white/5">
+                    {item.image && (
+                      <Image src={item.image} alt={item.name} fill className="object-cover" />
+                    )}
+                  </div>
+                  <div className="min-w-0">
+                    <p className="font-medium text-sm truncate">{item.name}</p>
+                    <p className="text-xs text-[var(--text-dim)]">{item.price.toFixed(2)} ₼</p>
+                  </div>
                 </div>
                 <div className="flex items-center gap-3">
                   <div className="flex items-center glass rounded-full">
