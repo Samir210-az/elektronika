@@ -32,13 +32,13 @@ export default function PortalAnimation() {
         size: (0.8 + Math.random() * 1.8) * window.devicePixelRatio,
         color: COLORS[Math.floor(Math.random() * COLORS.length)],
         life: Math.random(),
-        maxRadius: Math.min(w, h) * (0.4 + Math.random() * 0.3),
+        maxRadius: Math.min(w, h) * (0.5 + Math.random() * 0.4),
       };
     }
 
     function init() {
       resize();
-      particles = Array.from({ length: 160 }, makeParticle);
+      particles = Array.from({ length: 200 }, makeParticle);
     }
 
     function drawAurora() {
@@ -83,9 +83,9 @@ export default function PortalAnimation() {
     }
 
     function drawPortal() {
-      const baseR = Math.min(w, h) * 0.17;
+      const baseR = Math.min(w, h) * 0.26;
       for (let ring = 0; ring < 4; ring++) {
-        const r = baseR + ring * 13 * window.devicePixelRatio;
+        const r = baseR + ring * 18 * window.devicePixelRatio;
         const rot = t * (0.12 + ring * 0.04) * (ring % 2 === 0 ? 1 : -1);
         const grad = ctx.createLinearGradient(cx - r, cy - r, cx + r, cy + r);
         grad.addColorStop(0, "#00D9FF");
@@ -98,9 +98,9 @@ export default function PortalAnimation() {
         ctx.ellipse(0, 0, r, r * 0.98, 0, 0, Math.PI * 2);
         ctx.strokeStyle = grad;
         ctx.globalAlpha = 0.4 - ring * 0.07;
-        ctx.lineWidth = 1.3 * window.devicePixelRatio;
+        ctx.lineWidth = 1.8 * window.devicePixelRatio;
         ctx.shadowColor = "#8B5CF6";
-        ctx.shadowBlur = 20 * window.devicePixelRatio;
+        ctx.shadowBlur = 28 * window.devicePixelRatio;
         ctx.stroke();
         ctx.restore();
       }
