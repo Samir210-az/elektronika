@@ -11,7 +11,7 @@ export default function Hero() {
   const opacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
 
   return (
-    <section ref={ref} className="relative min-h-[100vh] flex items-start justify-center overflow-hidden bg-black pt-6 pb-20">
+    <section ref={ref} className="relative flex flex-col items-center justify-center overflow-hidden bg-black pt-6 pb-14 min-h-[600px] md:min-h-[720px]">
       <PortalAnimation />
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[var(--bg-deep)]" />
 
@@ -64,7 +64,7 @@ export default function Hero() {
         href="#products"
         animate={{ y: [0, 10, 0] }}
         transition={{ repeat: Infinity, duration: 1.8 }}
-        className="absolute bottom-8 text-[var(--text-dim)] z-10"
+        className="relative z-10 text-[var(--text-dim)] mt-10"
       >
         <ArrowDown size={22} />
       </motion.a>
