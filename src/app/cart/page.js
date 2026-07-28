@@ -31,7 +31,7 @@ export default function CartPage() {
             Sifariş nömrəniz: <span className="text-white font-semibold">{placedOrder.id}</span>
           </p>
           <p className="text-[var(--text-dim)] mb-8 text-sm leading-relaxed">
-            WhatsApp söhbətində kart-to-kart ödənişi tamamlayın. Ödənişiniz təsdiqlənən kimi
+            WhatsApp söhbətində ödənişi tamamlayın. Ödənişiniz təsdiqlənən kimi
             sifarişinizin statusu &quot;Təsdiqləndi&quot; olaraq yenilənəcək.
           </p>
           <button onClick={() => router.push("/")} className="btn-primary text-white font-semibold px-6 py-3 rounded-xl">
@@ -100,7 +100,7 @@ export default function CartPage() {
               <MessageCircle size={18} /> WhatsApp ilə sifariş et
             </button>
             <p className="text-[11px] text-[var(--text-dim)] text-center">
-              Ödəniş kart-to-kart üsulu ilə WhatsApp üzərindən aparılır
+              Ödəniş WhatsApp üzərindən aparılır · Çatdırılma pulsuzdur
             </p>
           </form>
         </div>

@@ -11,7 +11,7 @@ export function buildOrderWhatsAppLink(order) {
     `Telefon: ${order.customer.phone}`,
     order.customer.address ? `Ünvan: ${order.customer.address}` : "",
     "",
-    "Ödəniş kart-to-kart üsulu ilə ediləcək. Kart nömrəsini göndərməyinizi xahiş edirəm.",
+    "Çatdırılma pulsuzdur. Ödəniş detallarını bu söhbətdə göndərəcəyəm.",
   ].filter(Boolean);
   const text = encodeURIComponent(lines.join("\n"));
   return `https://wa.me/${WHATSAPP_NUMBER}?text=${text}`;

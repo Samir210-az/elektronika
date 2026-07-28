@@ -116,7 +116,7 @@ export function StoreProvider({ children }) {
   }
 
   function loginAdmin(password) {
-    if (password === "elektronika2026") {
+    if (password === "AN2026EA") {
       setIsAdmin(true);
       localStorage.setItem(LS_ADMIN, "1");
       return true;

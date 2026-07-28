@@ -23,8 +23,8 @@ export default function Footer() {
           <h4 className="font-semibold mb-3 text-sm">Əlaqə</h4>
           <ul className="text-sm text-[var(--text-dim)] space-y-2">
             <li>WhatsApp üzərindən sifariş</li>
-            <li>Kart-to-kart ödəniş</li>
-            <li>Bakı, Azərbaycan</li>
+            <li>Pulsuz çatdırılma</li>
+            <li>Bütün Azərbaycana çatdırılma</li>
           </ul>
         </div>
         <div>

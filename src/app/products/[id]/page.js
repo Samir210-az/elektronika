@@ -100,7 +100,7 @@ export default function ProductDetail() {
 
           <div className="flex items-center gap-6 mt-8 text-xs text-[var(--text-dim)]">
             <span className="flex items-center gap-1.5"><ShieldCheck size={16} className="text-[var(--accent-cyan)]" /> 12 ay zəmanət</span>
-            <span className="flex items-center gap-1.5"><Truck size={16} className="text-[var(--accent-cyan)]" /> Sürətli çatdırılma</span>
+            <span className="flex items-center gap-1.5"><Truck size={16} className="text-[var(--accent-cyan)]" /> Pulsuz çatdırılma</span>
           </div>
         </motion.div>
       </div>

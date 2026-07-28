@@ -16,7 +16,7 @@ npm run dev
 \`\`\`
 
 ## Admin panel
-`/admin` — standart şifrə: `elektronika2026` (istehsalatda mütləq dəyişin, `src/context/StoreContext.js`)
+`/admin` — standart şifrə: `AN2026EA` (istehsalatda mütləq dəyişin, `src/context/StoreContext.js`)
 
 ## WhatsApp nömrəsi
 `src/lib/whatsapp.js` faylında `WHATSAPP_NUMBER` dəyişənini real nömrə ilə əvəz edin.

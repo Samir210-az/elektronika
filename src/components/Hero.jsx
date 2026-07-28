@@ -61,7 +61,7 @@ export default function Hero() {
           </a>
           <div className="flex items-center gap-4 text-xs text-[var(--text-dim)]">
             <span className="flex items-center gap-1.5"><ShieldCheck size={16} className="text-[var(--accent-cyan)]" /> Zəmanətli</span>
-            <span className="flex items-center gap-1.5"><Truck size={16} className="text-[var(--accent-cyan)]" /> Sürətli çatdırılma</span>
+            <span className="flex items-center gap-1.5"><Truck size={16} className="text-[var(--accent-cyan)]" /> Pulsuz çatdırılma</span>
           </div>
         </motion.div>
       </motion.div>
