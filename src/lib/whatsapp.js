@@ -1,4 +1,4 @@
-export const WHATSAPP_NUMBER = "994000000000"; // TODO: admin real nömrə ilə əvəz etməlidir
+export const WHATSAPP_NUMBER = "994552107111";
 
 export function buildOrderWhatsAppLink(order) {
   const lines = [
