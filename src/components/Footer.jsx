@@ -1,4 +1,6 @@
 "use client";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { usePwaInstall } from "@/context/PwaInstallContext";
 import { Download, Check } from "lucide-react";
 
@@ -14,6 +16,16 @@ function InstagramIcon(props) {
 
 export default function Footer() {
   const { canInstall, installed, promptInstall } = usePwaInstall();
+  const [showHint, setShowHint] = useState(false);
+
+  async function handleInstallClick() {
+    if (canInstall) {
+      await promptInstall();
+    } else {
+      setShowHint(true);
+      setTimeout(() => setShowHint(false), 5000);
+    }
+  }
 
   return (
     <footer id="about" className="border-t border-white/5 mt-24">
@@ -39,17 +51,27 @@ export default function Footer() {
             <span className="inline-flex items-center gap-2 text-sm text-[var(--accent-cyan)]">
               <Check size={16} /> Artıq quraşdırılıb
             </span>
-          ) : canInstall ? (
-            <button
-              onClick={promptInstall}
-              className="inline-flex items-center gap-2 text-sm glass px-4 py-2 rounded-full hover:border-[var(--accent-cyan)] transition-colors"
-            >
-              <Download size={15} /> Tətbiqi yüklə
-            </button>
           ) : (
-            <p className="text-xs text-[var(--text-dim)] leading-relaxed">
-              Brauzer menyusundan &quot;Ana ekrana əlavə et&quot; seçimi ilə tətbiqi quraşdıra bilərsiniz.
-            </p>
+            <div className="relative">
+              <button
+                onClick={handleInstallClick}
+                className="inline-flex items-center gap-2 text-sm glass px-4 py-2 rounded-full hover:border-[var(--accent-cyan)] transition-colors"
+              >
+                <Download size={15} /> Tətbiqi yüklə
+              </button>
+              <AnimatePresence>
+                {showHint && (
+                  <motion.p
+                    initial={{ opacity: 0, y: -6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0 }}
+                    className="absolute top-full mt-2 left-0 w-64 text-xs text-[var(--text-dim)] glass rounded-lg p-3 leading-relaxed z-10"
+                  >
+                    Brauzerinizin menyusundan (⋮ və ya paylaş düyməsi) &quot;Ana ekrana əlavə et&quot; seçimini istifadə edin.
+                  </motion.p>
+                )}
+              </AnimatePresence>
+            </div>
           )}
           <div className="mt-5">
             <h4 className="font-semibold mb-3 text-sm">Bizi izləyin</h4>
