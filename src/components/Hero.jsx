@@ -11,7 +11,7 @@ export default function Hero() {
   const opacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
 
   return (
-    <section ref={ref} className="relative min-h-[100vh] flex items-start justify-center overflow-hidden bg-black pt-28 md:pt-20 pb-20">
+    <section ref={ref} className="relative min-h-[100vh] flex items-start justify-center overflow-hidden bg-black pt-6 pb-20">
       <PortalAnimation />
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[var(--bg-deep)]" />
 
