@@ -2,31 +2,25 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Download, X } from "lucide-react";
+import { usePwaInstall } from "@/context/PwaInstallContext";
 
 export default function InstallPrompt() {
-  const [deferredPrompt, setDeferredPrompt] = useState(null);
+  const { canInstall, promptInstall } = usePwaInstall();
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    function handler(e) {
-      e.preventDefault();
-      setDeferredPrompt(e);
-      const dismissedAt = localStorage.getItem("pwa_dismissed_at");
-      const dismissedRecently =
-        dismissedAt && Date.now() - Number(dismissedAt) < 7 * 24 * 60 * 60 * 1000;
-      if (!dismissedRecently) {
-        setTimeout(() => setVisible(true), 3500);
-      }
+    if (!canInstall) return;
+    const dismissedAt = localStorage.getItem("pwa_dismissed_at");
+    const dismissedRecently =
+      dismissedAt && Date.now() - Number(dismissedAt) < 7 * 24 * 60 * 60 * 1000;
+    if (!dismissedRecently) {
+      const t = setTimeout(() => setVisible(true), 3500);
+      return () => clearTimeout(t);
     }
-    window.addEventListener("beforeinstallprompt", handler);
-    return () => window.removeEventListener("beforeinstallprompt", handler);
-  }, []);
+  }, [canInstall]);
 
   async function handleInstall() {
-    if (!deferredPrompt) return;
-    deferredPrompt.prompt();
-    await deferredPrompt.userChoice;
-    setDeferredPrompt(null);
+    await promptInstall();
     setVisible(false);
   }
 

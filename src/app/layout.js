@@ -1,5 +1,6 @@
 import "./globals.css";
 import { StoreProvider } from "@/context/StoreContext";
+import { PwaInstallProvider } from "@/context/PwaInstallContext";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import InstallPrompt from "@/components/InstallPrompt";
@@ -21,12 +22,14 @@ export default function RootLayout({ children }) {
   return (
     <html lang="az">
       <body className="antialiased">
-        <StoreProvider>
-          <Navbar />
-          <main className="pt-16">{children}</main>
-          <Footer />
-          <InstallPrompt />
-        </StoreProvider>
+        <PwaInstallProvider>
+          <StoreProvider>
+            <Navbar />
+            <main className="pt-16">{children}</main>
+            <Footer />
+            <InstallPrompt />
+          </StoreProvider>
+        </PwaInstallProvider>
       </body>
     </html>
   );
