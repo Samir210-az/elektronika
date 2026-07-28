@@ -1,20 +1,41 @@
 "use client";
 import Link from "next/link";
-import { useState } from "react";
+import { useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { ShoppingCart, Menu, X, Zap } from "lucide-react";
 import { useStore } from "@/context/StoreContext";
 
 export default function Navbar() {
   const { cart } = useStore();
+  const router = useRouter();
   const [open, setOpen] = useState(false);
   const count = cart.reduce((s, i) => s + i.qty, 0);
+  const clickCountRef = useRef(0);
+  const clickTimerRef = useRef(null);
 
   const links = [
     { href: "/", label: "Ana səhifə" },
     { href: "/#products", label: "Məhsullar" },
     { href: "/#about", label: "Haqqımızda" },
   ];
+
+  function handleLogoClick(e) {
+    e.preventDefault();
+    clickCountRef.current += 1;
+    if (clickTimerRef.current) clearTimeout(clickTimerRef.current);
+
+    if (clickCountRef.current >= 5) {
+      clickCountRef.current = 0;
+      router.push("/admin");
+      return;
+    }
+
+    clickTimerRef.current = setTimeout(() => {
+      clickCountRef.current = 0;
+      router.push("/");
+    }, 450);
+  }
 
   return (
     <motion.header
@@ -24,7 +45,7 @@ export default function Navbar() {
       className="fixed top-0 left-0 right-0 z-40 glass"
     >
       <div className="max-w-7xl mx-auto px-5 h-16 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2 font-bold text-lg">
+        <Link href="/" onClick={handleLogoClick} className="flex items-center gap-2 font-bold text-lg select-none">
           <span className="w-8 h-8 rounded-lg btn-primary flex items-center justify-center">
             <Zap size={16} className="text-white" />
           </span>
