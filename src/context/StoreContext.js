@@ -1,45 +1,59 @@
 "use client";
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState, useCallback } from "react";
+import { supabase } from "@/lib/supabaseClient";
 import { seedProducts } from "@/data/seedProducts";
 
 const StoreContext = createContext(null);
 
-const LS_PRODUCTS = "elektronika_products_v1";
-const LS_ORDERS = "elektronika_orders_v1";
 const LS_CART = "elektronika_cart_v1";
-const LS_ADMIN = "elektronika_admin_auth_v1";
+const LS_ADMIN_SECRET = "elektronika_admin_secret_v1";
+
+function mapProductFromDb(row) {
+  return {
+    id: row.id,
+    name: row.name,
+    category: row.category,
+    price: Number(row.price),
+    oldPrice: Number(row.old_price),
+    stock: row.stock,
+    description: row.description,
+    images: row.images || [],
+    video: row.video || "",
+  };
+}
 
 export function StoreProvider({ children }) {
   const [products, setProducts] = useState(seedProducts);
   const [orders, setOrders] = useState([]);
   const [cart, setCart] = useState([]);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [adminSecret, setAdminSecret] = useState(null);
   const [hydrated, setHydrated] = useState(false);
+  const [dbConnected, setDbConnected] = useState(false);
 
-  useEffect(() => {
-    try {
-      const p = localStorage.getItem(LS_PRODUCTS);
-      const o = localStorage.getItem(LS_ORDERS);
-      const c = localStorage.getItem(LS_CART);
-      const a = localStorage.getItem(LS_ADMIN);
-      if (p) setProducts(JSON.parse(p));
-      else localStorage.setItem(LS_PRODUCTS, JSON.stringify(seedProducts));
-      if (o) setOrders(JSON.parse(o));
-      if (c) setCart(JSON.parse(c));
-      if (a === "1") setIsAdmin(true);
-    } catch (e) {
-      console.error("Local storage read error", e);
+  const refreshProducts = useCallback(async () => {
+    if (!supabase) return;
+    const { data, error } = await supabase.from("products").select("*").order("created_at");
+    if (!error && data) {
+      setProducts(data.map(mapProductFromDb));
+      setDbConnected(true);
     }
-    setHydrated(true);
   }, []);
 
   useEffect(() => {
-    if (hydrated) localStorage.setItem(LS_PRODUCTS, JSON.stringify(products));
-  }, [products, hydrated]);
-
-  useEffect(() => {
-    if (hydrated) localStorage.setItem(LS_ORDERS, JSON.stringify(orders));
-  }, [orders, hydrated]);
+    try {
+      const c = localStorage.getItem(LS_CART);
+      const secret = localStorage.getItem(LS_ADMIN_SECRET);
+      if (c) setCart(JSON.parse(c));
+      if (secret) {
+        setAdminSecret(secret);
+        setIsAdmin(true);
+      }
+    } catch (e) {
+      console.error("Local storage read error", e);
+    }
+    refreshProducts().finally(() => setHydrated(true));
+  }, [refreshProducts]);
 
   useEffect(() => {
     if (hydrated) localStorage.setItem(LS_CART, JSON.stringify(cart));
@@ -49,9 +63,7 @@ export function StoreProvider({ children }) {
     setCart((prev) => {
       const existing = prev.find((i) => i.id === product.id);
       if (existing) {
-        return prev.map((i) =>
-          i.id === product.id ? { ...i, qty: i.qty + qty } : i
-        );
+        return prev.map((i) => (i.id === product.id ? { ...i, qty: i.qty + qty } : i));
       }
       return [...prev, { id: product.id, name: product.name, price: product.price, image: product.images?.[0] || "", qty }];
     });
@@ -69,56 +81,79 @@ export function StoreProvider({ children }) {
     setCart([]);
   }
 
-  function createOrder(customerInfo) {
-    const order = {
-      id: "SF-" + Date.now().toString().slice(-8),
-      items: cart,
-      total: cart.reduce((s, i) => s + i.price * i.qty, 0),
-      customer: customerInfo,
-      status: "Gözləmədə",
-      createdAt: new Date().toISOString(),
-    };
-    setOrders((prev) => [order, ...prev]);
-    // reduce stock
-    setProducts((prev) =>
-      prev.map((p) => {
-        const item = cart.find((c) => c.id === p.id);
-        if (item) return { ...p, stock: Math.max(0, p.stock - item.qty) };
-        return p;
-      })
-    );
+  async function createOrder(customerInfo) {
+    const res = await fetch("/api/orders", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ items: cart, customer: customerInfo }),
+    });
+    if (!res.ok) throw new Error("Sifariş yaradıla bilmədi");
+    const { order } = await res.json();
     clearCart();
+    refreshProducts();
     return order;
   }
 
-  function confirmOrder(orderId) {
-    setOrders((prev) =>
-      prev.map((o) => (o.id === orderId ? { ...o, status: "Təsdiqləndi" } : o))
-    );
-  }
+  const refreshOrders = useCallback(
+    async (secret) => {
+      const key = secret || adminSecret;
+      if (!key) return;
+      const res = await fetch("/api/admin/orders", { headers: { "x-admin-secret": key } });
+      if (res.ok) {
+        const { orders: data } = await res.json();
+        setOrders(data);
+      }
+    },
+    [adminSecret]
+  );
 
-  function rejectOrder(orderId) {
-    setOrders((prev) =>
-      prev.map((o) => (o.id === orderId ? { ...o, status: "İmtina edildi" } : o))
-    );
-  }
-
-  function upsertProduct(product) {
-    setProducts((prev) => {
-      const exists = prev.find((p) => p.id === product.id);
-      if (exists) return prev.map((p) => (p.id === product.id ? product : p));
-      return [...prev, { ...product, id: product.id || "p" + Date.now() }];
+  async function confirmOrder(orderId) {
+    await fetch("/api/admin/orders", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json", "x-admin-secret": adminSecret },
+      body: JSON.stringify({ id: orderId, status: "Təsdiqləndi" }),
     });
+    refreshOrders();
   }
 
-  function deleteProduct(id) {
-    setProducts((prev) => prev.filter((p) => p.id !== id));
+  async function rejectOrder(orderId) {
+    await fetch("/api/admin/orders", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json", "x-admin-secret": adminSecret },
+      body: JSON.stringify({ id: orderId, status: "İmtina edildi" }),
+    });
+    refreshOrders();
   }
 
-  function loginAdmin(password) {
-    if (password === "AN2026EA") {
+  async function upsertProduct(product) {
+    await fetch("/api/admin/products", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "x-admin-secret": adminSecret },
+      body: JSON.stringify(product),
+    });
+    refreshProducts();
+  }
+
+  async function deleteProduct(id) {
+    await fetch("/api/admin/products", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json", "x-admin-secret": adminSecret },
+      body: JSON.stringify({ id }),
+    });
+    refreshProducts();
+  }
+
+  async function loginAdmin(password) {
+    const res = await fetch("/api/admin/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ password }),
+    });
+    if (res.ok) {
       setIsAdmin(true);
-      localStorage.setItem(LS_ADMIN, "1");
+      setAdminSecret(password);
+      localStorage.setItem(LS_ADMIN_SECRET, password);
+      refreshOrders(password);
       return true;
     }
     return false;
@@ -126,7 +161,8 @@ export function StoreProvider({ children }) {
 
   function logoutAdmin() {
     setIsAdmin(false);
-    localStorage.setItem(LS_ADMIN, "0");
+    setAdminSecret(null);
+    localStorage.removeItem(LS_ADMIN_SECRET);
   }
 
   return (
@@ -137,6 +173,7 @@ export function StoreProvider({ children }) {
         cart,
         isAdmin,
         hydrated,
+        dbConnected,
         addToCart,
         removeFromCart,
         updateCartQty,
@@ -148,6 +185,8 @@ export function StoreProvider({ children }) {
         deleteProduct,
         loginAdmin,
         logoutAdmin,
+        refreshOrders,
+        refreshProducts,
       }}
     >
       {children}

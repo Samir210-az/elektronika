@@ -14,12 +14,23 @@ export default function CartPage() {
   const [placedOrder, setPlacedOrder] = useState(null);
   const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
 
-  function handleOrder(e) {
+  const [orderError, setOrderError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+
+  async function handleOrder(e) {
     e.preventDefault();
     if (!form.name || !form.phone) return;
-    const order = createOrder(form);
-    setPlacedOrder(order);
-    window.open(buildOrderWhatsAppLink(order), "_blank");
+    setSubmitting(true);
+    setOrderError("");
+    try {
+      const order = await createOrder(form);
+      setPlacedOrder(order);
+      window.open(buildOrderWhatsAppLink(order), "_blank");
+    } catch (err) {
+      setOrderError("Sifariş göndərilmədi. Xahiş edirik yenidən cəhd edin.");
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   if (placedOrder) {
@@ -104,8 +115,13 @@ export default function CartPage() {
               onChange={(e) => setForm({ ...form, address: e.target.value })}
               className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 text-sm outline-none focus:border-[var(--accent-cyan)]"
             />
-            <button type="submit" className="btn-primary w-full text-white font-semibold py-3 rounded-xl flex items-center justify-center gap-2">
-              <MessageCircle size={18} /> WhatsApp ilə sifariş et
+            {orderError && <p className="text-red-400 text-xs text-center">{orderError}</p>}
+            <button
+              type="submit"
+              disabled={submitting}
+              className="btn-primary w-full text-white font-semibold py-3 rounded-xl flex items-center justify-center gap-2 disabled:opacity-60"
+            >
+              <MessageCircle size={18} /> {submitting ? "Göndərilir..." : "WhatsApp ilə sifariş et"}
             </button>
             <p className="text-[11px] text-[var(--text-dim)] text-center">
               Ödəniş WhatsApp üzərindən aparılır · Çatdırılma pulsuzdur

@@ -17,15 +17,17 @@ const emptyProduct = {
 };
 
 export default function AdminPage() {
-  const { isAdmin, loginAdmin, logoutAdmin, products, upsertProduct, deleteProduct, orders, confirmOrder, rejectOrder } = useStore();
+  const { isAdmin, loginAdmin, logoutAdmin, products, upsertProduct, deleteProduct, orders, confirmOrder, rejectOrder, refreshOrders } = useStore();
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [tab, setTab] = useState("products");
   const [editing, setEditing] = useState(null);
 
-  function handleLogin(e) {
+  async function handleLogin(e) {
     e.preventDefault();
-    if (!loginAdmin(password)) setError("Şifrə yanlışdır");
+    setError("");
+    const ok = await loginAdmin(password);
+    if (!ok) setError("Şifrə yanlışdır");
   }
 
   if (!isAdmin) {
@@ -65,7 +67,7 @@ export default function AdminPage() {
           <Package size={15} /> Məhsullar
         </button>
         <button
-          onClick={() => setTab("orders")}
+          onClick={() => { setTab("orders"); refreshOrders(); }}
           className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-sm ${tab === "orders" ? "btn-primary text-white" : "glass text-[var(--text-dim)]"}`}
         >
           <ClipboardList size={15} /> Sifarişlər ({orders.length})
